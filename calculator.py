@@ -18,6 +18,10 @@
 # The integer list is length n, the operator list SHOULD be n-1
 # Adjacent integers are then operated on (respecting OO) until no operations remain
 
+#LIMITATION
+# The most significant limitation is the inability of the program to calculate expressions
+# where parentheses produce a non-integer value, because the Eval function can only deal with integers
+
 import re
 ## Evaluation Function
 
@@ -32,25 +36,25 @@ def Eval(string):
     numbersIdentified = list(re.findall(r"(([^0-9]\-)?[0-9]+)", string)) #Find all numbers, accounting for negatives
     numbers = [] # Create a simple list of numbers
     for i,n in enumerate(numbersIdentified):
-        numbers.append(int(re.sub(r"[^0-9\-]","",n[0]))) #Convert the regexp output to a simple integer
+        numbers.append(float(re.sub(r"[^0-9\-]","",n[0]))) #Convert the regexp output to a simple integer
     if(string[0] == '-'):#Account for the edge case that the first integer is negative
         numbers[0] = numbers[0]*-1
     operators = list(re.findall('\*|\/|\+|\-', string)) #Find all operators (this will include negative signs as operators)
     #Remove negative operators that are just signs
     if len(list(operators)) >= len(list(numbers)):
         for i,n in enumerate(numbers):
-            if int(n) < 0:
+            if float(n) < 0:
                 del operators[i]
     #Eliminate all multiplication and division operations through value subsitution
     #A nested loop is required to ensure the elimination of all multiplication and division operations
     for x in range(len(operators)):
         for i, o in enumerate(operators):
             if o == '*':
-                numbers[i] = int(numbers[i])*int(numbers[i+1])
+                numbers[i] = float(numbers[i])*float(numbers[i+1])
                 del numbers[i+1]
                 del operators[i]
             elif o == '/':
-                numbers[i] = int(numbers[i])/int(numbers[i+1])
+                numbers[i] = float(numbers[i])/int(numbers[i+1])
                 del numbers[i+1]
                 del operators[i]
     #Eliminate all addition and subtraction operations through value subsitution
@@ -58,11 +62,11 @@ def Eval(string):
     for x in range(len(operators)):
         for i, o in enumerate(operators): ## Perform multiplication and division first
             if o == '+':
-                numbers[i] = int(numbers[i])+int(numbers[i+1])
+                numbers[i] = float(numbers[i])+float(numbers[i+1])
                 del numbers[i+1]
                 del operators[i]
             elif o == '-':
-                numbers[i] = int(numbers[i])-int(numbers[i+1])
+                numbers[i] = float(numbers[i])-float(numbers[i+1])
                 del numbers[i+1]
                 del operators[i]
     return numbers[0] # At the end of this process, we should have a single entry in our numbers list
